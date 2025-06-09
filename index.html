@@ -980,7 +980,56 @@ font-family: 'Aref Ruqaa', serif;
             if (e.key === 'Enter') findBooking();
         });
     </script>
-</body>
-</html>
+
+<!-- at the bottom of body, just before the closing </body> tag -->
+<div id="clown-counter" style="position: fixed; bottom: 10px; left: 10px; color: #888; font-size: 14px; z-index: 1000;">
+    🤡 <span id="clown-count">0000</span>
+</div>
+
+<script>
+    // Add this to your existing JavaScript
+    async function updateClownCounter() {
+        try {
+            const doc = await fetchSheetData();
+            if (!doc) return;
+
+            const table = doc.querySelector('table.waffle');
+            if (!table) return;
+
+            const rows = table.querySelectorAll('tr');
+            const headerCells = rows[1].querySelectorAll('td');
+            
+            let clownColumn = -1;
+            headerCells.forEach((cell, index) => {
+                if (cell.textContent.trim() === 'Clown') {
+                    clownColumn = index;
+                }
+            });
+
+            if (clownColumn === -1) return;
+
+            let clownCount = 0;
+            for (let i = 3; i < rows.length; i++) {
+                const cells = rows[i].querySelectorAll('td');
+                if (cells.length > clownColumn) {
+                    const clownValue = cells[clownColumn].textContent.trim();
+                    if (clownValue.includes('🤡')) {
+                        clownCount++;
+                    }
+                }
+            }
+
+            // Format the number with leading zeros
+            document.getElementById('clown-count').textContent = 
+                clownCount.toString().padStart(4, '0');
+        } catch (error) {
+            console.error('Error updating clown counter:', error);
+        }
+    }
+
+    // Call this when the page loads
+    document.addEventListener('DOMContentLoaded', updateClownCounter);
+</script>
+    
 </body>
 </html>
